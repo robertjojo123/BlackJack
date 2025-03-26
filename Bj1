@@ -1,0 +1,64 @@
+-- === SETUP ===
+local monitor = peripheral.find("monitor")
+monitor.setTextScale(1)
+monitor.setBackgroundColor(colors.black)
+
+-- === UTILS ===
+function drawCentered(text, y, color)
+    local w, _ = monitor.getSize()
+    local x = math.floor((w - #text) / 2) + 1
+    monitor.setCursorPos(x, y)
+    monitor.setTextColor(color)
+    monitor.write(text)
+end
+
+function drawFrame()
+    local w, h = monitor.getSize()
+    for x = 1, w do
+        monitor.setCursorPos(x, 1)
+        monitor.setTextColor(colors.red)
+        monitor.write("-")
+        monitor.setCursorPos(x, h)
+        monitor.setTextColor(colors.red)
+        monitor.write("-")
+    end
+    for y = 1, h do
+        monitor.setCursorPos(1, y)
+        monitor.setTextColor(colors.red)
+        monitor.write("|")
+        monitor.setCursorPos(w, y)
+        monitor.setTextColor(colors.red)
+        monitor.write("|")
+    end
+end
+
+function drawTitle()
+    monitor.setBackgroundColor(colors.black)
+    drawCentered("♠ ♥ BLACKJACK ♥ ♣", 3, colors.yellow)
+end
+
+function drawPlayButton()
+    drawCentered("[ PLAY ]", 8, colors.green)
+end
+
+function drawEnterBets()
+    drawCentered("PLEASE ENTER YOUR BETS", 8, colors.lime)
+end
+
+-- === MAIN LOGIC ===
+function waitForPlayPress()
+    while true do
+        local event, side, x, y = os.pullEvent("monitor_touch")
+        if y == 8 then return end
+    end
+end
+
+-- === START ===
+monitor.clear()
+drawFrame()
+drawTitle()
+drawPlayButton()
+waitForPlayPress()
+
+-- === AFTER PRESSING PLAY ===
+drawEnterBets()
