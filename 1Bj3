@@ -1,0 +1,46 @@
+-- === Blackjack Main Display Logic ===
+os.run({}, "blackjack_blit_assets.lua") -- load images
+
+local monitor = peripheral.find("monitor")
+if not monitor then error("No monitor found!") end
+
+monitor.setTextScale(0.5)
+monitor.setBackgroundColor(colors.green)
+monitor.clear()
+
+-- Utility: Draw a blit image at position
+function drawBlit(x, y, blitArray)
+  for i, line in ipairs(blitArray) do
+    local text, fg, bg = unpack(line)
+    monitor.setCursorPos(x, y + i - 1)
+    monitor.blit(text, fg, bg)
+  end
+end
+
+-- Draw main screen
+function drawMainMenu()
+  monitor.clear()
+  drawBlit(6, 5, playButtonBlit)
+  drawBlit(26, 5, rulesButtonBlit)
+end
+
+-- Example: respond to click
+function menuLoop()
+  while true do
+    local _, _, x, y = os.pullEvent("monitor_touch")
+    if y >= 5 and y <= 10 then
+      if x >= 6 and x <= 20 then
+        monitor.clear()
+        monitor.setCursorPos(5, 5)
+        monitor.write("PLAY PRESSED!")
+      elseif x >= 26 and x <= 40 then
+        monitor.clear()
+        monitor.setCursorPos(5, 5)
+        monitor.write("RULES PRESSED!")
+      end
+    end
+  end
+end
+
+drawMainMenu()
+menuLoop()
