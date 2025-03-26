@@ -1,0 +1,50 @@
+-- Load blit assets
+dofile("blackjack_hd_blit_assets.lua")
+
+local monitor = peripheral.find("monitor")
+monitor.setTextScale(0.5)
+monitor.setBackgroundColor(colors.black)
+monitor.clear()
+
+-- Utility: blit rendering
+local function drawBlit(x, y, blitArray)
+  for i, line in ipairs(blitArray) do
+    local text, fg, bg = unpack(line)
+    monitor.setCursorPos(x, y + i - 1)
+    monitor.blit(text, fg, bg)
+  end
+end
+
+-- Draw the main screen initially
+drawBlit(1, 1, mainScreenBlitHD)
+
+-- Button zones (adjust as needed)
+local function isInside(x, y, bx1, by1, bx2, by2)
+  return x >= bx1 and x <= bx2 and y >= by1 and y <= by2
+end
+
+-- Rules button zone (adjust if needed)
+local RULES_X1, RULES_Y1 = 60, 36
+local RULES_X2, RULES_Y2 = 80, 42
+
+-- Play button zone (adjust if needed)
+local PLAY_X1, PLAY_Y1 = 15, 36
+local PLAY_X2, PLAY_Y2 = 30, 42
+
+-- Event loop
+while true do
+  local event, side, x, y = os.pullEvent("monitor_touch")
+
+  -- === RULES BUTTON ===
+  if isInside(x, y, RULES_X1, RULES_Y1, RULES_X2, RULES_Y2) then
+    -- Pulse redstone to right (change side if needed)
+    redstone.setOutput("right", true)
+    sleep(0.3)
+    redstone.setOutput("right", false)
+
+  -- === PLAY BUTTON ===
+  elseif isInside(x, y, PLAY_X1, PLAY_Y1, PLAY_X2, PLAY_Y2) then
+    monitor.clear()
+    drawBlit(1, 1, afterPlayBlitHD)
+  end
+end
