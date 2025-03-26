@@ -1,0 +1,66 @@
+-- === SETUP ===
+local monitor = peripheral.find("monitor")
+monitor.setTextScale(0.5)  -- Smaller text, more space
+monitor.setBackgroundColor(colors.green)
+
+-- === UTILS ===
+function center(text, y, color)
+    local w, _ = monitor.getSize()
+    local x = math.floor((w - #text) / 2) + 1
+    monitor.setCursorPos(x, y)
+    monitor.setTextColor(color)
+    monitor.write(text)
+end
+
+function drawGradientFrame()
+    local w, h = monitor.getSize()
+    local colorsList = {colors.red, colors.orange, colors.yellow, colors.lime, colors.green}
+    for y = 1, h do
+        local color = colorsList[(y % #colorsList) + 1]
+        monitor.setTextColor(color)
+        monitor.setCursorPos(1, y)
+        monitor.write("|")
+        monitor.setCursorPos(w, y)
+        monitor.write("|")
+    end
+end
+
+function drawTitle()
+    center("♠ ♣  BLACK", 3, colors.yellow)
+    center("JACK  ♥ ♦", 4, colors.yellow)
+    center("CASINO NIGHT!", 6, colors.white)
+end
+
+function drawChipArt()
+    center("     ▄████▄     ", 8, colors.red)
+    center("  ███████████  ", 9, colors.red)
+    center(" ███ ♠ A J ♣ ███ ", 10, colors.white)
+    center("  ███████████  ", 11, colors.red)
+    center("     ▀████▀     ", 12, colors.red)
+end
+
+function drawPlayButton()
+    center("[ PLAY ]", 15, colors.lime)
+end
+
+function drawEnterBetsPrompt()
+    center("→ PLEASE ENTER YOUR BETS ←", 15, colors.green)
+end
+
+-- === MAIN ===
+monitor.clear()
+drawGradientFrame()
+drawTitle()
+drawChipArt()
+drawPlayButton()
+
+-- Wait for play
+while true do
+    local _, _, x, y = os.pullEvent("monitor_touch")
+    if y == 15 then
+        break
+    end
+end
+
+-- After click
+drawEnterBetsPrompt()
